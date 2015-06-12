@@ -1,0 +1,21 @@
+apply plugin: 'java'
+
+archivesBaseName = 'bigdataviewer-jni'
+version = '1.0-SNAPSHOT'
+group = 'sc.fiji'
+
+repositories {
+	mavenCentral()
+	maven {
+		url 'http://maven.imagej.net/content/groups/public'
+	}
+}
+
+dependencies {
+	compile group: 'sc.fiji', name: 'bigdataviewer-core', version: '1.2.0'
+}
+
+task copyDependencies(type: Copy) {
+	from configurations.compile
+	into '../cpp/jars/'
+}

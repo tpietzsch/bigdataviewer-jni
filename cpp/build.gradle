@@ -1,0 +1,45 @@
+apply plugin: 'cpp'
+
+model {
+	components {
+		libbdv(NativeLibrarySpec) {
+			binaries.all {
+				cppCompiler.args '-I', "${org.gradle.internal.jvm.Jvm.current().javaHome}/include"
+				cppCompiler.args '-I', "${org.gradle.internal.jvm.Jvm.current().javaHome}/include/darwin"
+				cppCompiler.args '-I', "/opt/local/include"
+				linker.args '-L', "${org.gradle.internal.jvm.Jvm.current().javaHome}/jre/lib/server"
+				linker.args "-Wl,-rpath,${org.gradle.internal.jvm.Jvm.current().javaHome}/jre/lib/server"
+				linker.args "-ljvm"
+			}
+		}
+	}
+}
+
+model {
+	components {
+		main(NativeExecutableSpec) {
+			sources {
+				cpp.lib library: "libbdv"
+			}
+			binaries.all {
+				cppCompiler.args '-I', "/opt/local/include"
+				linker.args '-L', "/opt/local/lib"
+				linker.args "-lpng"
+			}
+		}
+	}
+}
+
+task copyJars(type: Copy, dependsOn: [":java:build", ":java:copyDependencies"]) {
+	from('../java/build/libs/')
+	into('./jars/')
+	include "*.jar"
+}
+
+task cleanJars(type: Delete) {
+	delete fileTree(dir: "./jars", include: "*.jar")
+}
+
+assemble.dependsOn copyJars
+clean.dependsOn cleanJars
+
