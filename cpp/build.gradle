@@ -5,10 +5,13 @@ model {
 		libbdv(NativeLibrarySpec) {
 			binaries.all {
 				cppCompiler.args '-I', "${org.gradle.internal.jvm.Jvm.current().javaHome}/include"
+				cppCompiler.args '-I', "${org.gradle.internal.jvm.Jvm.current().javaHome}/include/linux"
 				cppCompiler.args '-I', "${org.gradle.internal.jvm.Jvm.current().javaHome}/include/darwin"
 				cppCompiler.args '-I', "/opt/local/include"
 				linker.args '-L', "${org.gradle.internal.jvm.Jvm.current().javaHome}/jre/lib/server"
 				linker.args "-Wl,-rpath,${org.gradle.internal.jvm.Jvm.current().javaHome}/jre/lib/server"
+				linker.args '-L', "${org.gradle.internal.jvm.Jvm.current().javaHome}/jre/lib/amd64/server"
+				linker.args "-Wl,-rpath,${org.gradle.internal.jvm.Jvm.current().javaHome}/jre/lib/amd64/server"
 				linker.args "-ljvm"
 			}
 		}
