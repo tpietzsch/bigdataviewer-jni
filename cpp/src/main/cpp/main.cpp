@@ -2,6 +2,7 @@
 #include <png.h>
 #include <iostream>
 #include <sstream>
+#include <stdlib.h>
 
 #include "bdvlib.h"
 
