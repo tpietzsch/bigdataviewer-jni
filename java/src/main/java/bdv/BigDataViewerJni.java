@@ -163,7 +163,12 @@ public final class BigDataViewerJni
 		final HeadlessBigDataViewer bdv = bdvs.get( id );
 		if ( bdv != null )
 		{
-			return bdv.getViewer().getLatestImage();
+			final long start = System.currentTimeMillis();
+			final ARGBRenderImage result = bdv.getViewer().getLatestImage();
+			final long end = System.currentTimeMillis();
+			if ( result != null )
+				System.out.println( (end-start) + "ms" );
+			return result;
 		}
 		return null;
 	}
