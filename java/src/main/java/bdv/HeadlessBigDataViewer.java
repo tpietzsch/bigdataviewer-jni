@@ -100,7 +100,7 @@ public final class HeadlessBigDataViewer
 
 		final AbstractSequenceDescription< ?, ?, ? > seq = spimData.getSequenceDescription();
 		final int numTimepoints = seq.getTimePoints().size();
-		final Cache cache = ( ( ViewerImgLoader< ?, ? > ) seq.getImgLoader() ).getCache();
+		final Cache cache = ( ( ViewerImgLoader ) seq.getImgLoader() ).getCache();
 
 		final HeadlessBigDataViewer bdv = new HeadlessBigDataViewer( converterSetups, sources, spimData, numTimepoints, cache, width, height, screenscales );
 
