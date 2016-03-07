@@ -3,9 +3,9 @@ package bdv;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import bdv.viewer.state.ViewerState;
 import mpicbg.spim.data.SpimDataException;
 import net.imglib2.realtransform.AffineTransform3D;
-import bdv.viewer.state.ViewerState;
 
 public final class BigDataViewerJni
 {
@@ -23,6 +23,25 @@ public final class BigDataViewerJni
 		try
 		{
 			bdvs.put( id, HeadlessBigDataViewer.open( fn, width, height, screenscales ) );
+		}
+		catch ( final SpimDataException e )
+		{
+			e.printStackTrace();
+			return -1;
+		}
+		return id;
+	}
+
+	public static int construct(
+			final int shareCacheWithId,
+			final int width,
+			final int height,
+			final double[] screenscales )
+	{
+		final int id = idGenerator.incrementAndGet();
+		try
+		{
+			bdvs.put( id, HeadlessBigDataViewer.open( bdvs.get( shareCacheWithId ), width, height, screenscales ) );
 		}
 		catch ( final SpimDataException e )
 		{

@@ -5,12 +5,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import mpicbg.spim.data.SpimDataException;
-import mpicbg.spim.data.generic.AbstractSpimData;
-import mpicbg.spim.data.generic.sequence.AbstractSequenceDescription;
-import net.imglib2.realtransform.AffineTransform3D;
-import net.imglib2.type.numeric.ARGBType;
-
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
@@ -27,6 +21,11 @@ import bdv.tools.brightness.SetupAssignments;
 import bdv.viewer.DisplayMode;
 import bdv.viewer.SourceAndConverter;
 import bdv.viewer.VisibilityAndGrouping;
+import mpicbg.spim.data.SpimDataException;
+import mpicbg.spim.data.generic.AbstractSpimData;
+import mpicbg.spim.data.generic.sequence.AbstractSequenceDescription;
+import net.imglib2.realtransform.AffineTransform3D;
+import net.imglib2.type.numeric.ARGBType;
 
 public final class HeadlessBigDataViewer
 {
@@ -35,6 +34,8 @@ public final class HeadlessBigDataViewer
 	private final HeadlessViewerPanel viewer;
 
 	private File proposedSettingsFile;
+
+	private final AbstractSpimData< ? > spimData;
 
 	/**
 	 *
@@ -73,6 +74,7 @@ public final class HeadlessBigDataViewer
 			final int height,
 			final double[] screenscales )
 	{
+		this.spimData = spimData;
 		setupAssignments = new SetupAssignments( converterSetups, 0, 65535 );
 		if ( setupAssignments.getMinMaxGroups().size() > 0 )
 		{
@@ -107,6 +109,24 @@ public final class HeadlessBigDataViewer
 		WrapBasicImgLoader.removeWrapperIfPresent( spimData );
 		final AffineTransform3D initTransform = InitializeViewerState.initTransform( width, height, false, bdv.viewer.getState() );
 		bdv.viewer.setCurrentViewerTransform( initTransform );
+		return bdv;
+	}
+
+	public static HeadlessBigDataViewer open(
+			final HeadlessBigDataViewer shareCacheWith,
+			final int width,
+			final int height,
+			final double[] screenscales )
+		throws SpimDataException
+	{
+		final AbstractSpimData< ? > spimData = shareCacheWith.spimData;
+		final HeadlessBigDataViewer bdv = open( spimData, width, height, screenscales );
+		bdv.setupAssignments.restoreFromXml( shareCacheWith.setupAssignments.toXml() );
+		final VisibilityAndGrouping vg = bdv.getViewer().getVisibilityAndGrouping();
+		vg.setDisplayMode( DisplayMode.FUSED );
+		final int numSources = bdv.getViewer().getState().numSources();
+		for ( int i = 0; i < numSources; ++i )
+			vg.setSourceActive( i, i == 0 );
 		return bdv;
 	}
 
