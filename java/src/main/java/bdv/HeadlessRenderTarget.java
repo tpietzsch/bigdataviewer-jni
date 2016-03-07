@@ -127,11 +127,12 @@ public final class HeadlessRenderTarget
 	 * @return a previously set {@link ARGBRenderImage} that is currently not
 	 *         being painted or null. Used for double-buffering.
 	 */
-	synchronized ARGBRenderImage setRenderedImageAndTransform( final ARGBRenderImage img, final AffineTransform3D transform )
+	synchronized ARGBRenderImage setRenderedImageAndTransform( final ARGBRenderImage img, final AffineTransform3D transform, final boolean isComplete )
 	{
 		pendingTransform.set( transform );
 		final ARGBRenderImage tmp = pendingImage;
 		pendingImage = img;
+		pendingImage.isComplete = isComplete;
 		pending = true;
 		return tmp;
 	}
@@ -242,8 +243,9 @@ public final class HeadlessRenderTarget
 		return imageUpdated ? img : null;
 	}
 
-	synchronized void currentImageUpdated()
+	synchronized void currentImageUpdated( final boolean isComplete )
 	{
 		currentImageUpdated = true;
+		paintedImage.isComplete = isComplete;
 	}
 }

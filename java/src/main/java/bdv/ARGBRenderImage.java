@@ -9,6 +9,8 @@ public final class ARGBRenderImage extends ArrayImg< ARGBType, IntArray >
 {
 	final private int[] data;
 
+	boolean isComplete;
+
 	public ARGBRenderImage( final int width, final int height )
 	{
 		this( width, height, new int[ width * height ] );
@@ -39,5 +41,10 @@ public final class ARGBRenderImage extends ArrayImg< ARGBType, IntArray >
 	public int getHeight()
 	{
 		return ( int ) dimension( 1 );
+	}
+
+	public boolean isComplete()
+	{
+		return isComplete;
 	}
 }

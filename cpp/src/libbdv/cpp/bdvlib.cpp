@@ -429,6 +429,12 @@ BigDataViewerBitmap* BigDataViewer::getRenderedBitmap()
 		cerr << "Unable to locate method: getData()" << endl;
 		return NULL;
 	}
+	jmethodID isCompleteID = jniEnv->GetMethodID(ARGBRenderImageClass, "isComplete", "()Z");
+	if (isCompleteID == NULL)
+	{
+		cerr << "Unable to locate method: isComplete()" << endl;
+		return NULL;
+	}
 
 	jobject renderImage = jniEnv->CallStaticObjectMethod(BigDataViewerJniClass, getRenderedBitmapID, __id);
 	if (renderImage != NULL)
@@ -436,10 +442,11 @@ BigDataViewerBitmap* BigDataViewer::getRenderedBitmap()
 		int width = jniEnv->CallIntMethod(renderImage, getWidthID);
 		int height = jniEnv->CallIntMethod(renderImage, getHeightID);
 		jintArray dataArray = (jintArray) jniEnv->CallObjectMethod(renderImage, getDataID);
+		bool isComplete = jniEnv->CallBooleanMethod(renderImage, isCompleteID);
 		jboolean isCopy;
 		int* data = (int*) jniEnv->GetPrimitiveArrayCritical(dataArray, &isCopy);
 //		cout << "isCopy = " << (isCopy ? "true" : "false" ) << endl;
-		return new BigDataViewerBitmap(width, height, data, new BigDataViewerBitmap::ArrayHandle(dataArray, data, jniEnv));
+		return new BigDataViewerBitmap(width, height, data, isComplete, new BigDataViewerBitmap::ArrayHandle(dataArray, data, jniEnv));
 	}
 	else
 	{

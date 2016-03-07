@@ -9,21 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 
-import net.imglib2.Dimensions;
-import net.imglib2.RandomAccess;
-import net.imglib2.RandomAccessible;
-import net.imglib2.RandomAccessibleInterval;
-import net.imglib2.RealRandomAccessible;
-import net.imglib2.Volatile;
-import net.imglib2.converter.Converter;
-import net.imglib2.display.screenimage.awt.ARGBScreenImage;
-import net.imglib2.realtransform.AffineTransform3D;
-import net.imglib2.realtransform.RealViews;
-import net.imglib2.type.numeric.ARGBType;
-import net.imglib2.ui.PainterThread;
-import net.imglib2.ui.RenderTarget;
-import net.imglib2.ui.Renderer;
-import net.imglib2.ui.SimpleInterruptibleProjector;
 import bdv.img.cache.Cache;
 import bdv.img.cache.CachedCellImg;
 import bdv.img.cache.LoadingStrategy;
@@ -41,6 +26,21 @@ import bdv.viewer.render.VolatileHierarchyProjector;
 import bdv.viewer.render.VolatileProjector;
 import bdv.viewer.state.SourceState;
 import bdv.viewer.state.ViewerState;
+import net.imglib2.Dimensions;
+import net.imglib2.RandomAccess;
+import net.imglib2.RandomAccessible;
+import net.imglib2.RandomAccessibleInterval;
+import net.imglib2.RealRandomAccessible;
+import net.imglib2.Volatile;
+import net.imglib2.converter.Converter;
+import net.imglib2.display.screenimage.awt.ARGBScreenImage;
+import net.imglib2.realtransform.AffineTransform3D;
+import net.imglib2.realtransform.RealViews;
+import net.imglib2.type.numeric.ARGBType;
+import net.imglib2.ui.PainterThread;
+import net.imglib2.ui.RenderTarget;
+import net.imglib2.ui.Renderer;
+import net.imglib2.ui.SimpleInterruptibleProjector;
 
 /**
  * A {@link Renderer} that uses a coarse-to-fine rendering scheme. First, a
@@ -468,12 +468,14 @@ public final class HeadlessMultiResolutionRenderer
 
 		synchronized ( this )
 		{
+			final boolean isComplete = ( currentScreenScaleIndex == 0 ) && p.isValid();
+
 			// if rendering was not cancelled...
 			if ( success )
 			{
 				if ( createProjector )
 				{
-					final ARGBRenderImage bi = display.setRenderedImageAndTransform( screenImage, currentProjectorTransform );
+					final ARGBRenderImage bi = display.setRenderedImageAndTransform( screenImage, currentProjectorTransform, isComplete );
 					if ( doubleBuffered )
 					{
 						renderIdQueue.pop();
@@ -500,7 +502,7 @@ public final class HeadlessMultiResolutionRenderer
 				}
 				else
 				{
-					display.currentImageUpdated();
+					display.currentImageUpdated( isComplete );
 				}
 
 				if ( currentScreenScaleIndex > 0 )

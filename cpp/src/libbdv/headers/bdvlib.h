@@ -10,14 +10,15 @@ public:
 	int width;
 	int height;
 	int* data;
+	bool isComplete;
 
 	~BigDataViewerBitmap();
 
 private:
 	class ArrayHandle;
 	ArrayHandle* handle;
-	BigDataViewerBitmap(int width, int height, int* data, ArrayHandle* handle )
-		: width(width), height(height), data(data), handle(handle) {}
+	BigDataViewerBitmap(int width, int height, int* data, bool isComplete, ArrayHandle* handle )
+		: width(width), height(height), data(data), isComplete(isComplete), handle(handle) {}
 	friend class BigDataViewer;
 };
 
