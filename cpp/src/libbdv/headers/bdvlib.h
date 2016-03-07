@@ -26,9 +26,9 @@ private:
 class BigDataViewer
 {
 public:
-	BigDataViewer(const char* sURL, int width, int height, double* screenscales, int screenscales_size);
+	BigDataViewer(const char* sURL, int width, int height, double* screenscales, int screenscales_size, int num_rendering_threads);
 
-	BigDataViewer(const BigDataViewer* shareCacheWith, int width, int height, double* screenscales, int screenscales_size);
+	BigDataViewer(const BigDataViewer* shareCacheWith, int width, int height, double* screenscales, int screenscales_size, int num_rendering_threads);
 
 	~BigDataViewer();
 

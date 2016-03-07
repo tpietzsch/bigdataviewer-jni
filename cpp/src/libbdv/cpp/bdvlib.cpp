@@ -18,7 +18,7 @@ using boost::ends_with;
 
 static JavaVM* theJvm = NULL;
 
-BigDataViewer::BigDataViewer (const char* sURL, int width, int height, double* screenscales, int screenscales_size)
+BigDataViewer::BigDataViewer (const char* sURL, int width, int height, double* screenscales, int screenscales_size, int num_rendering_threads)
 {
 	if (theJvm == NULL)
 		cerr << "start JVM first!" << endl;
@@ -31,7 +31,7 @@ BigDataViewer::BigDataViewer (const char* sURL, int width, int height, double* s
 		cerr << "Unable to locate class: bdv/BigDataViewerJni" << endl;
 		return;
 	}
-	jmethodID constructID = jniEnv->GetStaticMethodID(BigDataViewerJniClass, "construct", "(Ljava/lang/String;II[D)I");
+	jmethodID constructID = jniEnv->GetStaticMethodID(BigDataViewerJniClass, "construct", "(Ljava/lang/String;II[DI)I");
 	if (constructID == NULL)
 	{
 		cerr << "Unable to locate method: construct()" << endl;
@@ -41,12 +41,12 @@ BigDataViewer::BigDataViewer (const char* sURL, int width, int height, double* s
 	jstring jUrl = jniEnv->NewStringUTF(sURL);
 	jdoubleArray array = jniEnv->NewDoubleArray( screenscales_size );
 	jniEnv->SetDoubleArrayRegion( array, 0, screenscales_size, screenscales );
-	__id = jniEnv->CallStaticIntMethod(BigDataViewerJniClass, constructID, jUrl, width, height, array);
+	__id = jniEnv->CallStaticIntMethod(BigDataViewerJniClass, constructID, jUrl, width, height, array, num_rendering_threads);
 
 	theJvm->DetachCurrentThread();
 }
 
-BigDataViewer::BigDataViewer (const BigDataViewer* shareCacheWith, int width, int height, double* screenscales, int screenscales_size)
+BigDataViewer::BigDataViewer (const BigDataViewer* shareCacheWith, int width, int height, double* screenscales, int screenscales_size, int num_rendering_threads)
 {
 	if (theJvm == NULL)
 		cerr << "start JVM first!" << endl;
@@ -59,7 +59,7 @@ BigDataViewer::BigDataViewer (const BigDataViewer* shareCacheWith, int width, in
 		cerr << "Unable to locate class: bdv/BigDataViewerJni" << endl;
 		return;
 	}
-	jmethodID constructID = jniEnv->GetStaticMethodID(BigDataViewerJniClass, "construct", "(III[D)I");
+	jmethodID constructID = jniEnv->GetStaticMethodID(BigDataViewerJniClass, "construct", "(III[DI)I");
 	if (constructID == NULL)
 	{
 		cerr << "Unable to locate method: construct()" << endl;
@@ -69,7 +69,7 @@ BigDataViewer::BigDataViewer (const BigDataViewer* shareCacheWith, int width, in
 	int shareCacheWithId = shareCacheWith->__id;
 	jdoubleArray array = jniEnv->NewDoubleArray( screenscales_size );
 	jniEnv->SetDoubleArrayRegion( array, 0, screenscales_size, screenscales );
-	__id = jniEnv->CallStaticIntMethod(BigDataViewerJniClass, constructID, shareCacheWithId, width, height, array);
+	__id = jniEnv->CallStaticIntMethod(BigDataViewerJniClass, constructID, shareCacheWithId, width, height, array, num_rendering_threads);
 
 	theJvm->DetachCurrentThread();
 }

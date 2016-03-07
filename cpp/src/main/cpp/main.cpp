@@ -34,7 +34,7 @@ int main(int argc, char ** argv)
 		 * - number of elemenst of scaling factors array.
 		 */
 		double screenscales[] = { 1, 0.75, 0.5, 0.25, 0.125 };
-		BigDataViewer bdv("http://tomancak-srv1.mpi-cbg.de:8081/Drosophila", 800, 600, screenscales, sizeof(screenscales)/sizeof(double));
+		BigDataViewer bdv("http://tomancak-srv1.mpi-cbg.de:8081/Drosophila", 800, 600, screenscales, sizeof(screenscales)/sizeof(double), 3);
 
 		/*
 		 * Print some information about the dataset.

@@ -17,12 +17,13 @@ public final class BigDataViewerJni
 			final String fn,
 			final int width,
 			final int height,
-			final double[] screenscales )
+			final double[] screenscales,
+			final int numRenderingThreads )
 	{
 		final int id = idGenerator.incrementAndGet();
 		try
 		{
-			bdvs.put( id, HeadlessBigDataViewer.open( fn, width, height, screenscales ) );
+			bdvs.put( id, HeadlessBigDataViewer.open( fn, width, height, screenscales, numRenderingThreads ) );
 		}
 		catch ( final SpimDataException e )
 		{
@@ -36,12 +37,13 @@ public final class BigDataViewerJni
 			final int shareCacheWithId,
 			final int width,
 			final int height,
-			final double[] screenscales )
+			final double[] screenscales,
+			final int numRenderingThreads )
 	{
 		final int id = idGenerator.incrementAndGet();
 		try
 		{
-			bdvs.put( id, HeadlessBigDataViewer.open( bdvs.get( shareCacheWithId ), width, height, screenscales ) );
+			bdvs.put( id, HeadlessBigDataViewer.open( bdvs.get( shareCacheWithId ), width, height, screenscales, numRenderingThreads ) );
 		}
 		catch ( final SpimDataException e )
 		{
@@ -190,7 +192,7 @@ public final class BigDataViewerJni
 	public static void main( final String[] args ) throws SpimDataException
 	{
 		final String fn = "/Users/pietzsch/workspace/data/111010_weber_full.xml";
-		final int id = construct( fn, 8000, 6000, new double[] { 1, 0.75, 0.5, 0.25, 0.125 } );
+		final int id = construct( fn, 8000, 6000, new double[] { 1, 0.75, 0.5, 0.25, 0.125 }, 3 );
 		for ( int i = 0; i < 10; ++i )
 			System.out.println( getRenderedBitmap( id ) );
 		destruct( id );

@@ -72,7 +72,8 @@ public final class HeadlessBigDataViewer
 			final Cache cache,
 			final int width,
 			final int height,
-			final double[] screenscales )
+			final double[] screenscales,
+			final int numRenderingThreads )
 	{
 		this.spimData = spimData;
 		setupAssignments = new SetupAssignments( converterSetups, 0, 65535 );
@@ -82,14 +83,15 @@ public final class HeadlessBigDataViewer
 			for ( final ConverterSetup setup : setupAssignments.getConverterSetups() )
 				setupAssignments.moveSetupToGroup( setup, group );
 		}
-		viewer = new HeadlessViewerPanel( sources, numTimepoints, cache, HeadlessViewerPanel.options().width( width ).height( height ).screenScales( screenscales ) );
+		viewer = new HeadlessViewerPanel( sources, numTimepoints, cache, HeadlessViewerPanel.options().width( width ).height( height ).screenScales( screenscales ).numRenderingThreads( numRenderingThreads ) );
 	}
 
 	public static HeadlessBigDataViewer open(
 			final AbstractSpimData< ? > spimData,
 			final int width,
 			final int height,
-			final double[] screenscales )
+			final double[] screenscales,
+			final int numRenderingThreads )
 	{
 		if ( WrapBasicImgLoader.wrapImgLoaderIfNecessary( spimData ) )
 		{
@@ -104,7 +106,7 @@ public final class HeadlessBigDataViewer
 		final int numTimepoints = seq.getTimePoints().size();
 		final Cache cache = ( ( ViewerImgLoader ) seq.getImgLoader() ).getCache();
 
-		final HeadlessBigDataViewer bdv = new HeadlessBigDataViewer( converterSetups, sources, spimData, numTimepoints, cache, width, height, screenscales );
+		final HeadlessBigDataViewer bdv = new HeadlessBigDataViewer( converterSetups, sources, spimData, numTimepoints, cache, width, height, screenscales, numRenderingThreads );
 
 		WrapBasicImgLoader.removeWrapperIfPresent( spimData );
 		final AffineTransform3D initTransform = InitializeViewerState.initTransform( width, height, false, bdv.viewer.getState() );
@@ -116,11 +118,12 @@ public final class HeadlessBigDataViewer
 			final HeadlessBigDataViewer shareCacheWith,
 			final int width,
 			final int height,
-			final double[] screenscales )
+			final double[] screenscales,
+			final int numRenderingThreads )
 		throws SpimDataException
 	{
 		final AbstractSpimData< ? > spimData = shareCacheWith.spimData;
-		final HeadlessBigDataViewer bdv = open( spimData, width, height, screenscales );
+		final HeadlessBigDataViewer bdv = open( spimData, width, height, screenscales, numRenderingThreads );
 		bdv.setupAssignments.restoreFromXml( shareCacheWith.setupAssignments.toXml() );
 		final VisibilityAndGrouping vg = bdv.getViewer().getVisibilityAndGrouping();
 		vg.setDisplayMode( DisplayMode.FUSED );
@@ -134,11 +137,12 @@ public final class HeadlessBigDataViewer
 			final String xmlFilename,
 			final int width,
 			final int height,
-			final double[] screenscales )
+			final double[] screenscales,
+			final int numRenderingThreads )
 		throws SpimDataException
 	{
 		final SpimDataMinimal spimData = new XmlIoSpimDataMinimal().load( xmlFilename );
-		final HeadlessBigDataViewer bdv = open( spimData, width, height, screenscales );
+		final HeadlessBigDataViewer bdv = open( spimData, width, height, screenscales, numRenderingThreads );
 		if ( !bdv.tryLoadSettings( xmlFilename ) )
 			InitializeViewerState.initBrightness( 0.001, 0.999, bdv.viewer.getState(), bdv.setupAssignments );
 		final VisibilityAndGrouping vg = bdv.getViewer().getVisibilityAndGrouping();
