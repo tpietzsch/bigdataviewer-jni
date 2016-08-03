@@ -245,7 +245,14 @@ public final class HeadlessRenderTarget
 
 	synchronized void currentImageUpdated( final boolean isComplete )
 	{
-		currentImageUpdated = true;
-		paintedImage.isComplete = isComplete;
+		if ( pending )
+		{
+			pendingImage.isComplete = isComplete;
+		}
+		else
+		{
+			currentImageUpdated = true;
+			paintedImage.isComplete = isComplete;
+		}
 	}
 }
